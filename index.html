@@ -3,285 +3,914 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Algernon Laboratories</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230a0a0f'/%3E%3Cpath d='M16 5 L6 27 L9.5 27 L12 21 L20 21 L22.5 27 L26 27 L16 5Z M13.1 18.5 L16 9.5 L18.9 18.5Z' fill='%23c9a84c'/%3E%3Ccircle cx='16' cy='5' r='1.2' fill='%23c9a84c' opacity='0.6'/%3E%3C/svg%3E"/>
+<title>Vouched Signals — Behavioral Intelligence for Emerging Market Stablecoin Flows</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #0a0a0f;
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #0f0f1a;
+    --bg-card: #12121f;
     --accent-gold: #c9a84c;
     --accent-gold-dim: #8a7235;
+    --accent-blue: #4a6fa5;
+    --accent-teal: #2a9d8f;
     --text-primary: #e8e6e1;
     --text-secondary: #9a9590;
     --text-dim: #5a5550;
     --border: #1e1e2e;
+    --glow-gold: rgba(201, 168, 76, 0.15);
   }
 
-  html, body { height: 100%; }
+  html { scroll-behavior: smooth; }
 
   body {
     font-family: 'Space Grotesk', sans-serif;
-    background: var(--bg);
+    background: var(--bg-primary);
     color: var(--text-primary);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow-x: hidden;
+    line-height: 1.6;
   }
 
-  canvas {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    opacity: 0.3;
+  /* ========== NAV ========== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1.2rem 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    transition: all 0.4s;
   }
-
-  .mouse-glow {
-    position: fixed;
-    width: 500px; height: 500px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,168,76,0.05), transparent 70%);
-    pointer-events: none;
-    z-index: 1;
-    left: 0; top: 0;
-    will-change: transform;
+  nav.scrolled { padding: 0.8rem 3rem; background: rgba(10,10,15,0.95); }
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    color: var(--accent-gold);
+    text-transform: uppercase;
   }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    font-weight: 400;
+  }
+  .nav-links a:hover { color: var(--accent-gold); }
 
-  .content {
-    position: relative;
-    z-index: 2;
+  /* ========== HERO ========== */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
     text-align: center;
-    max-width: 750px;
+    position: relative;
     padding: 2rem;
   }
-
-  .epigraph {
+  #signal-canvas {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0.3;
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 820px; }
+  .hero-epigraph {
     font-family: 'Crimson Pro', serif;
     font-style: italic;
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: var(--text-dim);
-    margin-bottom: 3.5rem;
+    margin-bottom: 3rem;
     opacity: 0;
-    animation: fadeUp 1s 0.2s forwards;
+    animation: fadeUp 1s 0.3s forwards;
   }
-
-  .logo-text {
+  .hero-logo-text {
     font-family: 'JetBrains Mono', monospace;
-    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
     font-weight: 700;
     letter-spacing: 8px;
     text-transform: uppercase;
     line-height: 1.1;
     margin-bottom: 0.3rem;
     opacity: 0;
-    animation: fadeUp 1s 0.5s forwards;
+    animation: fadeUp 1s 0.6s forwards;
   }
-  .logo-text .gold { color: var(--accent-gold); }
-  .logo-text .white { color: var(--text-primary); }
-
-  .subtitle {
+  .hero-logo-text .gold { color: var(--accent-gold); }
+  .hero-logo-text .white { color: var(--text-primary); }
+  .hero-subtitle {
     font-family: 'JetBrains Mono', monospace;
-    font-size: clamp(0.55rem, 1.3vw, 0.75rem);
+    font-size: clamp(0.6rem, 1.5vw, 0.8rem);
     letter-spacing: 6px;
     text-transform: uppercase;
     color: var(--text-secondary);
-    margin-bottom: 3.5rem;
+    margin-bottom: 3rem;
     opacity: 0;
-    animation: fadeUp 1s 0.7s forwards;
+    animation: fadeUp 1s 0.8s forwards;
   }
-
-  .tagline {
+  .hero-tagline {
     font-family: 'Crimson Pro', serif;
-    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
     font-weight: 300;
     color: var(--text-secondary);
-    margin-bottom: 3.5rem;
-    line-height: 1.6;
+    margin-bottom: 3rem;
     opacity: 0;
-    animation: fadeUp 1s 0.9s forwards;
+    animation: fadeUp 1s 1s forwards;
+  }
+  .hero-cta {
+    display: inline-block;
+    padding: 0.9rem 2.5rem;
+    border: 1px solid var(--accent-gold);
+    color: var(--accent-gold);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    transition: all 0.4s;
+    opacity: 0;
+    animation: fadeUp 1s 1.2s forwards;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-cta::before {
+    content: '';
+    position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, var(--glow-gold), transparent);
+    transition: left 0.5s;
+  }
+  .hero-cta:hover::before { left: 100%; }
+  .hero-cta:hover {
+    background: rgba(201,168,76,0.1);
+    box-shadow: 0 0 30px rgba(201,168,76,0.15);
   }
 
-  /* Progress report styled "coming soon" */
-  .report-box {
-    display: inline-block;
-    border: 1px solid var(--border);
-    padding: 1.8rem 2.8rem;
-    position: relative;
-    opacity: 0;
-    animation: fadeUp 1s 1.1s forwards;
+  .scroll-indicator {
+    position: absolute; bottom: 2rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    opacity: 0; animation: fadeUp 1s 1.5s forwards;
   }
-  .report-box::before {
+  .scroll-indicator span {
+    font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .scroll-line {
+    width: 1px; height: 40px; background: var(--accent-gold-dim);
+    animation: scrollPulse 2s infinite;
+  }
+
+  /* ========== SECTIONS ========== */
+  .section {
+    padding: 8rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .section.visible { opacity: 1; transform: translateY(0); }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent-gold-dim);
+    margin-bottom: 1.5rem;
+  }
+  .section-title {
+    font-family: 'Crimson Pro', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 300;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+  .section-body {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  /* ========== THESIS / FIELD REPORT ========== */
+  #thesis { border-top: 1px solid var(--border); }
+  .field-report {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 3rem;
+    margin-top: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .field-report::before {
     content: '';
     position: absolute; top: 0; left: 0;
     width: 3px; height: 100%;
     background: linear-gradient(to bottom, var(--accent-gold), transparent);
   }
-  .report-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.55rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--accent-gold-dim);
-    margin-bottom: 0.8rem;
-  }
-  .report-message {
-    font-family: 'Crimson Pro', serif;
-    font-size: 1.15rem;
-    font-style: italic;
-    color: var(--text-secondary);
-    line-height: 1.6;
-  }
-  .report-message em {
-    color: var(--accent-gold);
-    font-style: italic;
-  }
-
-  /* Blinking cursor after message */
-  .cursor {
-    display: inline-block;
-    width: 2px;
-    height: 1em;
-    background: var(--accent-gold);
-    margin-left: 4px;
-    vertical-align: text-bottom;
-    animation: blink 1s step-end infinite;
-  }
-
-  .contact {
-    margin-top: 3rem;
-    opacity: 0;
-    animation: fadeUp 1s 1.4s forwards;
-  }
-  .contact a {
-    color: var(--accent-gold-dim);
-    text-decoration: none;
+  .report-header {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
+    color: var(--accent-gold-dim);
+    margin-bottom: 1.5rem;
     text-transform: uppercase;
-    border-bottom: 1px solid transparent;
-    padding-bottom: 2px;
-    transition: all 0.3s;
   }
-  .contact a:hover {
-    color: var(--accent-gold);
-    border-bottom-color: var(--accent-gold);
+  .report-text {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    line-height: 1.9;
+    font-weight: 300;
+  }
+  .report-text em { color: var(--accent-gold); font-style: italic; }
+
+  /* ========== SURFACES / WHAT WE BUILD ========== */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 2.5rem 2rem;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+  .feature-card::after {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .feature-card:hover::after { opacity: 1; }
+  .feature-card:hover {
+    border-color: rgba(201,168,76,0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+  .feature-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+  .feature-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+    color: var(--text-primary);
+  }
+  .feature-card p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-weight: 300;
   }
 
+  /* ========== CALIBRATION / HOW IT WORKS ========== */
+  .signal-journey {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 3rem;
+    position: relative;
+  }
+  .signal-journey::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent-gold), var(--accent-gold-dim), transparent);
+  }
+  .signal-step {
+    display: flex;
+    gap: 2.5rem;
+    padding: 2rem 0;
+    position: relative;
+    align-items: flex-start;
+  }
+  .signal-node {
+    width: 49px;
+    min-width: 49px;
+    height: 49px;
+    border: 1px solid var(--accent-gold-dim);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent-gold);
+    position: relative;
+    z-index: 2;
+    background: var(--bg-primary);
+    transition: all 0.4s;
+  }
+  .signal-step:hover .signal-node {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 20px rgba(201,168,76,0.2);
+  }
+  .signal-step-content h3 {
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .signal-step-content p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ========== MISCALIBRATION CALLOUT ========== */
+  .miscalibration {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+  .mis-card {
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+  }
+  .mis-card .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-gold-dim);
+    margin-bottom: 0.6rem;
+  }
+  .mis-card.wrong .label { color: #c9534c; }
+  .mis-card .pattern {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .mis-card .reading {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+  }
+  @media (max-width: 600px) {
+    .miscalibration { grid-template-columns: 1fr; }
+  }
+
+  /* ========== TECH SECTION ========== */
+  .tech-marquee {
+    overflow: hidden;
+    margin-top: 3rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .tech-marquee-inner {
+    display: flex;
+    gap: 3rem;
+    animation: marquee 30s linear infinite;
+    width: max-content;
+  }
+  .tech-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .tech-tag:hover { border-color: var(--accent-gold-dim); color: var(--accent-gold); }
+
+  /* ========== ROADMAP ========== */
+  .roadmap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .roadmap-phase {
+    padding: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    position: relative;
+    transition: all 0.4s;
+  }
+  .roadmap-phase:hover {
+    border-color: rgba(201,168,76,0.2);
+  }
+  .roadmap-phase.active { border-color: var(--accent-gold-dim); }
+  .roadmap-phase.active::before {
+    content: 'CURRENT';
+    position: absolute; top: -0.6rem; right: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    color: var(--accent-gold);
+    background: var(--bg-primary);
+    padding: 0 0.5rem;
+  }
+  .phase-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    color: var(--accent-gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .roadmap-phase h3 {
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+  }
+  .roadmap-phase p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .kill-criterion {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    line-height: 1.5;
+  }
+  .kill-criterion::before {
+    content: 'KILL ▸ ';
+    color: #c9534c;
+  }
+
+  /* ========== CTA ========== */
+  #cta {
+    text-align: center;
+    padding: 10rem 3rem;
+    position: relative;
+  }
+  .cta-quote {
+    font-family: 'Crimson Pro', serif;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text-secondary);
+    max-width: 760px;
+    margin: 0 auto 1rem;
+    line-height: 1.6;
+  }
+  .cta-attribution {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-bottom: 3rem;
+  }
+  .cta-email {
+    display: inline-block;
+    padding: 1rem 3rem;
+    border: 1px solid var(--accent-gold);
+    color: var(--accent-gold);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    transition: all 0.4s;
+  }
+  .cta-email:hover {
+    background: rgba(201,168,76,0.1);
+    box-shadow: 0 0 40px rgba(201,168,76,0.12);
+  }
+
+  /* ========== FOOTER ========== */
+  footer {
+    padding: 3rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.75rem;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--accent-gold); }
+
+  /* ========== ANIMATIONS ========== */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  @keyframes blink {
-    50% { opacity: 0; }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
   }
 
+  /* ========== MOUSE GLOW ========== */
+  .mouse-glow {
+    position: fixed;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.04), transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+    transition: transform 0.15s ease-out;
+  }
+
+  /* ========== RESPONSIVE ========== */
   @media (max-width: 768px) {
-    .report-box { padding: 1.5rem 1.8rem; }
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .section { padding: 5rem 1.5rem; }
+    .field-report { padding: 2rem; }
+    .signal-journey::before { left: 16px; }
+    .signal-node { width: 33px; min-width: 33px; height: 33px; font-size: 0.6rem; }
+    .signal-step { gap: 1.5rem; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+    #cta { padding: 6rem 1.5rem; }
   }
 </style>
 </head>
 <body>
 
-<canvas id="maze"></canvas>
-<div class="mouse-glow" id="glow"></div>
+<div class="mouse-glow" id="mouseGlow"></div>
 
-<div class="content">
-  <!--<p class="epigraph">"I want to be smart… I want to know things."</p>-->
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">Vouched Signals</div>
+  <ul class="nav-links">
+    <li><a href="#thesis">Thesis</a></li>
+    <li><a href="#surfaces">Product</a></li>
+    <li><a href="#calibration">Calibration</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#cta">Contact</a></li>
+  </ul>
+</nav>
 
-  <h1 class="logo-text">
-    <span class="gold">Algernon</span><br>
-    <span class="white">Laboratories</span>
-  </h1>
-  <p class="subtitle">Decentralized Applications · Trust Networks</p>
+<!-- HERO -->
+<section id="hero">
+  <canvas id="signal-canvas"></canvas>
+  <div class="hero-content">
+    <p class="hero-epigraph">"All models are wrong, but some are useful." — George Box</p>
+    <h1 class="hero-logo-text">
+      <span class="gold">Vouched</span><br>
+      <span class="white">Signals</span>
+    </h1>
+    <p class="hero-subtitle">Behavioral Intelligence · Stablecoin Compliance</p>
+    <p class="hero-tagline">Should I trust this wallet? Answered with reasons attached.</p>
+    <a href="#thesis" class="hero-cta">Read the Thesis</a>
+  </div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
 
-  <p class="tagline">Building trust infrastructure for underserved markets</p>
+<!-- THESIS -->
+<section id="thesis" class="section">
+  <div class="section-label">Field Report No. 1 — Thesis</div>
+  <h2 class="section-title">Wrong calibration is worse than no signal.</h2>
+  <p class="section-body">
+    Chainalysis, TRM, and Elliptic built their models on Western exchange data. That ground truth is wrong
+    for this market. A Lagos P2P off-ramp looks like laundering. A Nairobi savings circle looks like a
+    Sybil ring. Legitimate flows get flagged, real fraud slips through, and your compliance team burns
+    hours on false positives.
+  </p>
 
-  <div class="report-box">
-    <div class="report-label">progris riport — day 1</div>
-    <p class="report-message">
-      The maze is being constructed.<br>
-      <em>Algernon runs first.</em><span class="cursor"></span>
+  <div class="miscalibration">
+    <div class="mis-card wrong">
+      <div class="label">Generic Model Reads</div>
+      <p class="pattern">Identical amounts, fixed schedule, ten wallets in rotation.</p>
+      <p class="reading">→ Layering. Flag for review.</p>
+    </div>
+    <div class="mis-card">
+      <div class="label">Calibrated Reads</div>
+      <p class="pattern">Identical amounts, fixed schedule, ten wallets in rotation.</p>
+      <p class="reading">→ Chama. The oldest savings instrument on the continent.</p>
+    </div>
+  </div>
+
+  <div class="field-report">
+    <div class="report-header">field report — algernon labs, 2026</div>
+    <p class="report-text">
+      Vouched Signals is <em>behavioral intelligence calibrated for emerging market stablecoin flows.</em>
+      We score wallets, detect Sybil clusters, and surface risk signals that reflect how stablecoins
+      actually move in Kenya, Nigeria, and Ghana — not how they move on Coinbase. The API answers one
+      question for every wallet your business touches: <em>should I trust this?</em>
+      With reasons attached, so your compliance team can defend the decision.
     </p>
   </div>
+</section>
 
-  <div class="contact">
-    <a href="mailto:flowers@algernonlabs.dev">flowers@algernonlabs.dev</a>
+<!-- SURFACES -->
+<section id="surfaces" class="section">
+  <div class="section-label">Field Report No. 2 — Surfaces</div>
+  <h2 class="section-title">What we ship</h2>
+  <p class="section-body">
+    One indexed graph. Multiple products. Each surface answers a question your compliance team is already
+    asking — without forcing them to learn a new vocabulary or a new dashboard.
+  </p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">🛡️</span>
+      <h3>Shield API</h3>
+      <p>One call returns a wallet risk score, behavioral flags, and an explanation. No SDK. No dashboard to learn. Just an answer your compliance team can defend in a regulator review.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🕸️</span>
+      <h3>Sybil Cluster Detection</h3>
+      <p>Coordinated wallet networks, surfaced. Chama rotations distinguished from layering. Agent settlement clusters distinguished from smurfing. Calibrated for the patterns that matter here.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🧬</span>
+      <h3>Behavioral Fingerprinting</h3>
+      <p>Counterparty graphs, timing distributions, value patterns. Features built from how stablecoins actually move — P2P off-ramps, airtime triangles, mobile-money bridges, agent topology.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📋</span>
+      <h3>Compliance Dashboard</h3>
+      <p>Case management, evidence trails, regulator-ready reports. Priced for the tier Chainalysis and TRM cannot profitably serve — sub-$2K/month, focused, sufficient.</p>
+    </div>
   </div>
-</div>
+</section>
+
+<!-- CALIBRATION / APPROACH -->
+<section id="calibration" class="section">
+  <div class="section-label">Field Report No. 3 — Calibration</div>
+  <h2 class="section-title">How signals are built</h2>
+  <p class="section-body">
+    Every score reflects a sequence of decisions about what counts as normal. We make those decisions
+    visible — and we calibrate them to local context, not to imported defaults.
+  </p>
+  <div class="signal-journey">
+    <div class="signal-step">
+      <div class="signal-node">I</div>
+      <div class="signal-step-content">
+        <h3>Index the Chain</h3>
+        <p>Celo first. Full transaction graph indexed into Apache AGE. BSC and Tron follow customer demand, not speculation. The indexer is a cost center to customers and a strategic asset to us — both true.</p>
+      </div>
+    </div>
+    <div class="signal-step">
+      <div class="signal-node">II</div>
+      <div class="signal-step-content">
+        <h3>Build the Behavioral Graph</h3>
+        <p>Counterparties, timing distributions, amount clustering, agent topology. Raw on-chain motion becomes structured behavioral patterns that a model can reason about.</p>
+      </div>
+    </div>
+    <div class="signal-step">
+      <div class="signal-node">III</div>
+      <div class="signal-step-content">
+        <h3>Detect Local Patterns</h3>
+        <p>Chama rotations. P2P off-ramp clusters around agent networks. MiniPay phone-number families. Airtime → stablecoin → cash triangles. Patterns that look anomalous to generic models — and aren't.</p>
+      </div>
+    </div>
+    <div class="signal-step">
+      <div class="signal-node">IV</div>
+      <div class="signal-step-content">
+        <h3>Score With Explanations</h3>
+        <p>Every flag carries its reasoning. Compliance teams need to defend their decisions to regulators, partners, and their own users. Black-box scores don't survive that conversation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section id="tech" class="section">
+  <div class="section-label">Field Report No. 4 — Infrastructure</div>
+  <h2 class="section-title">Built on verified foundations</h2>
+  <p class="section-body">
+    Rust where correctness matters. TLA+ specs for the load-bearing invariants. Apache AGE for the
+    behavioral graph. Postgres for the boring parts. AI-leveraged engineering compresses the rest.
+  </p>
+  <div class="tech-marquee">
+    <div class="tech-marquee-inner">
+      <span class="tech-tag">Celo Mainnet</span>
+      <span class="tech-tag">Rust / Axum</span>
+      <span class="tech-tag">Apache AGE</span>
+      <span class="tech-tag">sqlx / Postgres</span>
+      <span class="tech-tag">TLA+ Verified</span>
+      <span class="tech-tag">Behavioral Graphs</span>
+      <span class="tech-tag">Sybil Detection</span>
+      <span class="tech-tag">Domain Calibration</span>
+      <span class="tech-tag">MiniPay Ecosystem</span>
+      <span class="tech-tag">Celo Mainnet</span>
+      <span class="tech-tag">Rust / Axum</span>
+      <span class="tech-tag">Apache AGE</span>
+      <span class="tech-tag">sqlx / Postgres</span>
+      <span class="tech-tag">TLA+ Verified</span>
+      <span class="tech-tag">Behavioral Graphs</span>
+      <span class="tech-tag">Sybil Detection</span>
+      <span class="tech-tag">Domain Calibration</span>
+      <span class="tech-tag">MiniPay Ecosystem</span>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap" class="section">
+  <div class="section-label">Field Report No. 5 — Timeline</div>
+  <h2 class="section-title">The phases</h2>
+  <p class="section-body">
+    Every phase has a decision gate. If the gate fails, we pivot or shut down — we don't slow-play.
+    Falsifiability over conviction.
+  </p>
+  <div class="roadmap-grid">
+    <div class="roadmap-phase active">
+      <div class="phase-label">Phase 0 — Foundation</div>
+      <h3>Demoable API</h3>
+      <p>Indexer running on Celo mainnet. Trust scoring layer built. 14-day demoable sprint to first externally-callable Shield endpoint.</p>
+      <div class="kill-criterion">No demoable API by end of Q2 → re-scope.</div>
+    </div>
+    <div class="roadmap-phase">
+      <div class="phase-label">Phase 1 — Beachhead</div>
+      <h3>First Paying Customers</h3>
+      <p>Shield API live. Three to five design partners (Cashramp-class operators in Kenya, Nigeria, Ghana). Pricing validated against the sub-$2K/month tier.</p>
+      <div class="kill-criterion">Fewer than 3 paying customers in 6 months → buyer doesn't exist at stated urgency.</div>
+    </div>
+    <div class="roadmap-phase">
+      <div class="phase-label">Phase 2 — Validation</div>
+      <h3>Calibration Benchmark</h3>
+      <p>Published precision/recall against generic models on labeled African flow data. The calibration thesis becomes evidence — or it dies here, honestly.</p>
+      <div class="kill-criterion">No measurable lift over generic models → reposition on price + scope alone.</div>
+    </div>
+    <div class="roadmap-phase">
+      <div class="phase-label">Phase 3 — Scale</div>
+      <h3>Network Compounds</h3>
+      <p>Multi-chain coverage where customers need it. Compliance Dashboard ships. Regulator-track features (informal OTC broker detection) open the second buyer conversation.</p>
+      <div class="kill-criterion">Acquisition CAC stays high after 20 customers → niche may not generalize.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta" class="section">
+  <p class="cta-quote">
+    "Until the lion learns how to write, every story will glorify the hunter."
+  </p>
+  <p class="cta-attribution">— African proverb, attributed by Chinua Achebe</p>
+  <a href="mailto:jared@algernonlab.dev" class="cta-email">jared@algernonlab.dev</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">© 2026 Algernon Labs LLC — A product of Algernon Laboratories</div>
+  <div class="footer-links">
+    <a href="mailto:jared@algernonlab.dev">Contact</a>
+    <a href="https://algernonlab.dev">Algernon Labs</a>
+  </div>
+</footer>
 
 <script>
-const c = document.getElementById('maze');
-const x = c.getContext('2d');
+// ========== SIGNAL CANVAS (Animated Trust Graph) ==========
+const canvas = document.getElementById('signal-canvas');
+const ctx = canvas.getContext('2d');
 let nodes = [];
-let mouse = { x: -1e3, y: -1e3 };
+let mouse = { x: -1000, y: -1000 };
 
-const isMobile = () => innerWidth <= 768;
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  initNodes();
+}
 
-function resize() {
-  c.width = innerWidth;
-  c.height = innerHeight;
+function initNodes() {
   nodes = [];
-  const mobile = isMobile();
-  // More nodes on mobile, packed tighter for visibility
-  const density = mobile ? 8000 : 16000;
-  const n = Math.floor((c.width * c.height) / density);
-  for (let i = 0; i < n; i++) {
+  const count = Math.floor((canvas.width * canvas.height) / 18000);
+  for (let i = 0; i < count; i++) {
     nodes.push({
-      x: Math.random() * c.width,
-      y: Math.random() * c.height,
-      vx: (Math.random() - 0.5) * (mobile ? 0.35 : 0.25),
-      vy: (Math.random() - 0.5) * (mobile ? 0.35 : 0.25),
-      r: Math.random() * (mobile ? 2.8 : 2) + (mobile ? 1.2 : 0.8),
-      p: Math.random() * Math.PI * 2
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 2 + 1,
+      pulse: Math.random() * Math.PI * 2,
+      // Some nodes are "trusted" (gold), some are "unscored" (dim)
+      trust: Math.random()
     });
   }
 }
 
-function draw() {
-  x.clearRect(0, 0, c.width, c.height);
-  const g = [201, 168, 76];
-  const mobile = isMobile();
-  const connectDist = mobile ? 160 : 130;
-  const baseOpacity = mobile ? 0.5 : 0.35;
-  const lineOpacity = mobile ? 0.12 : 0.07;
+function drawSignals() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const gold = [201, 168, 76];
+
   for (let i = 0; i < nodes.length; i++) {
     const n = nodes[i];
-    n.x += n.vx; n.y += n.vy; n.p += 0.008;
-    if (n.x < 0 || n.x > c.width) n.vx *= -1;
-    if (n.y < 0 || n.y > c.height) n.vy *= -1;
-    const dx = n.x - mouse.x, dy = n.y - mouse.y;
-    const d = Math.sqrt(dx * dx + dy * dy);
-    if (d < 180) { n.vx += dx * 0.0004; n.vy += dy * 0.0004; }
-    const a = baseOpacity + Math.sin(n.p) * 0.15;
-    x.beginPath();
-    x.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-    x.fillStyle = `rgba(${g[0]},${g[1]},${g[2]},${a})`;
-    x.fill();
+    n.x += n.vx;
+    n.y += n.vy;
+    n.pulse += 0.01;
+
+    if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+    if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+
+    // Mouse attract: signals reach toward the cursor (calibration)
+    const dx = n.x - mouse.x;
+    const dy = n.y - mouse.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 150) {
+      n.vx += dx * 0.0003;
+      n.vy += dy * 0.0003;
+    }
+
+    const pAlpha = (0.25 + Math.sin(n.pulse) * 0.15) * (0.4 + n.trust * 0.6);
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${gold[0]},${gold[1]},${gold[2]},${pAlpha})`;
+    ctx.fill();
+
+    // Connect nearby nodes — trust edges
     for (let j = i + 1; j < nodes.length; j++) {
       const m = nodes[j];
-      const dd = Math.sqrt((n.x - m.x) ** 2 + (n.y - m.y) ** 2);
-      if (dd < connectDist) {
-        x.beginPath();
-        x.moveTo(n.x, n.y);
-        x.lineTo(m.x, m.y);
-        x.strokeStyle = `rgba(${g[0]},${g[1]},${g[2]},${lineOpacity * (1 - dd / connectDist)})`;
-        x.lineWidth = mobile ? 0.8 : 0.5;
-        x.stroke();
+      const d = Math.sqrt((n.x - m.x) ** 2 + (n.y - m.y) ** 2);
+      if (d < 120) {
+        ctx.beginPath();
+        ctx.moveTo(n.x, n.y);
+        ctx.lineTo(m.x, m.y);
+        ctx.strokeStyle = `rgba(${gold[0]},${gold[1]},${gold[2]},${0.08 * (1 - d / 120)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
       }
     }
   }
-  requestAnimationFrame(draw);
+  requestAnimationFrame(drawSignals);
 }
 
-resize(); draw();
-addEventListener('resize', resize);
+resizeCanvas();
+drawSignals();
+window.addEventListener('resize', resizeCanvas);
 
-const gl = document.getElementById('glow');
-addEventListener('mousemove', e => {
-  mouse.x = e.clientX; mouse.y = e.clientY;
-  gl.style.transform = `translate(${e.clientX - 250}px,${e.clientY - 250}px)`;
+// ========== MOUSE GLOW ==========
+const glow = document.getElementById('mouseGlow');
+document.addEventListener('mousemove', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+  glow.style.transform = `translate(${e.clientX - 200}px, ${e.clientY - 200}px)`;
+});
+
+// ========== SCROLL ANIMATIONS ==========
+const nav = document.getElementById('navbar');
+const sections = document.querySelectorAll('.section');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+
+sections.forEach(s => observer.observe(s));
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+});
+
+// ========== SMOOTH SCROLL ==========
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+  });
 });
 </script>
 </body>
