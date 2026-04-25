@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vouched Signals — Behavioral Intelligence for Emerging Market Stablecoin Flows</title>
+<title>Algernon Laboratories — A small lab building behavioral intelligence for overlooked markets</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap');
 
@@ -73,7 +73,7 @@
     position: relative;
     padding: 2rem;
   }
-  #signal-canvas {
+  #maze-canvas {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     opacity: 0.3;
   }
@@ -196,9 +196,9 @@
     font-weight: 300;
   }
 
-  /* ========== THESIS / FIELD REPORT ========== */
-  #thesis { border-top: 1px solid var(--border); }
-  .field-report {
+  /* ========== ABOUT / PROGRESS REPORT ========== */
+  #about { border-top: 1px solid var(--border); }
+  .progress-report {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 2px;
@@ -207,7 +207,7 @@
     position: relative;
     overflow: hidden;
   }
-  .field-report::before {
+  .progress-report::before {
     content: '';
     position: absolute; top: 0; left: 0;
     width: 3px; height: 100%;
@@ -229,25 +229,33 @@
     font-weight: 300;
   }
   .report-text em { color: var(--accent-gold); font-style: italic; }
+  .report-text + .report-text { margin-top: 1.2rem; }
 
-  /* ========== SURFACES / WHAT WE BUILD ========== */
-  .features-grid {
+  /* ========== PRODUCTS ========== */
+  .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: 1fr;
     gap: 1.5rem;
     margin-top: 3rem;
   }
-  .feature-card {
+  .product-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 2px;
-    padding: 2.5rem 2rem;
+    padding: 3rem;
     transition: all 0.4s;
     position: relative;
     overflow: hidden;
-    cursor: default;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: center;
   }
-  .feature-card::after {
+  .product-card.exploration {
+    border-style: dashed;
+    opacity: 0.85;
+  }
+  .product-card::after {
     content: '';
     position: absolute; top: 0; left: 0;
     width: 100%; height: 2px;
@@ -255,217 +263,170 @@
     opacity: 0;
     transition: opacity 0.4s;
   }
-  .feature-card:hover::after { opacity: 1; }
-  .feature-card:hover {
-    border-color: rgba(201,168,76,0.2);
-    transform: translateY(-4px);
+  .product-card:hover::after { opacity: 1; }
+  .product-card:hover {
+    border-color: rgba(201,168,76,0.3);
+    transform: translateY(-2px);
     box-shadow: 0 10px 40px rgba(0,0,0,0.3);
   }
-  .feature-icon {
-    font-size: 1.8rem;
-    margin-bottom: 1.2rem;
-    display: block;
+  .product-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
   }
-  .feature-card h3 {
+  .product-status::before {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent-gold);
+    box-shadow: 0 0 10px var(--accent-gold);
+    animation: pulse 2s infinite;
+  }
+  .product-card.exploration .product-status { color: var(--text-dim); }
+  .product-card.exploration .product-status::before {
+    background: var(--text-dim);
+    box-shadow: none;
+    animation: none;
+  }
+  .product-card h3 {
+    font-family: 'Crimson Pro', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 0.6rem;
+    color: var(--text-primary);
+  }
+  .product-card .product-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent-gold-dim);
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+  .product-card p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-weight: 300;
+    max-width: 600px;
+  }
+  .product-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.8rem;
+    border: 1px solid var(--accent-gold);
+    color: var(--accent-gold);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.4s;
+    white-space: nowrap;
+  }
+  .product-cta:hover {
+    background: rgba(201,168,76,0.1);
+    box-shadow: 0 0 30px rgba(201,168,76,0.15);
+  }
+  @media (max-width: 768px) {
+    .product-card { grid-template-columns: 1fr; }
+  }
+
+  /* ========== HOW WE WORK / PRINCIPLES ========== */
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .principle-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 2.5rem 2rem;
+    transition: all 0.4s;
+    position: relative;
+  }
+  .principle-card:hover {
+    border-color: rgba(201,168,76,0.2);
+    transform: translateY(-4px);
+  }
+  .principle-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--accent-gold-dim);
+    margin-bottom: 1rem;
+  }
+  .principle-card h3 {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 1.1rem;
     font-weight: 500;
     margin-bottom: 0.8rem;
     color: var(--text-primary);
   }
-  .feature-card p {
+  .principle-card p {
     font-size: 0.9rem;
     color: var(--text-secondary);
     line-height: 1.7;
     font-weight: 300;
   }
 
-  /* ========== CALIBRATION / HOW IT WORKS ========== */
-  .signal-journey {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+  /* ========== TEAM ========== */
+  .team-block {
     margin-top: 3rem;
-    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
-  .signal-journey::before {
-    content: '';
-    position: absolute;
-    left: 24px;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: linear-gradient(to bottom, var(--accent-gold), var(--accent-gold-dim), transparent);
-  }
-  .signal-step {
-    display: flex;
-    gap: 2.5rem;
+  .team-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2rem;
     padding: 2rem 0;
-    position: relative;
-    align-items: flex-start;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
   }
-  .signal-node {
-    width: 49px;
-    min-width: 49px;
-    height: 49px;
-    border: 1px solid var(--accent-gold-dim);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .team-row:last-child { border-bottom: none; }
+  .team-role {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
-    color: var(--accent-gold);
-    position: relative;
-    z-index: 2;
-    background: var(--bg-primary);
-    transition: all 0.4s;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-gold-dim);
   }
-  .signal-step:hover .signal-node {
-    border-color: var(--accent-gold);
-    box-shadow: 0 0 20px rgba(201,168,76,0.2);
+  .team-detail h3 {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 0.6rem;
   }
-  .signal-step-content h3 {
-    font-size: 1.15rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-  }
-  .signal-step-content p {
+  .team-detail p {
     font-size: 0.95rem;
     color: var(--text-secondary);
     line-height: 1.7;
     font-weight: 300;
   }
-
-  /* ========== MISCALIBRATION CALLOUT ========== */
-  .miscalibration {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-top: 2.5rem;
-  }
-  .mis-card {
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 1.5rem;
-    background: var(--bg-secondary);
-  }
-  .mis-card .label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--accent-gold-dim);
-    margin-bottom: 0.6rem;
-  }
-  .mis-card.wrong .label { color: #c9534c; }
-  .mis-card .pattern {
-    font-family: 'Crimson Pro', serif;
-    font-style: italic;
-    font-size: 1rem;
-    color: var(--text-secondary);
-    line-height: 1.5;
-  }
-  .mis-card .reading {
-    margin-top: 0.6rem;
-    font-size: 0.85rem;
-    color: var(--text-primary);
-  }
-  @media (max-width: 600px) {
-    .miscalibration { grid-template-columns: 1fr; }
-  }
-
-  /* ========== TECH SECTION ========== */
-  .tech-marquee {
-    overflow: hidden;
-    margin-top: 3rem;
-    padding: 2rem 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .tech-marquee-inner {
-    display: flex;
-    gap: 3rem;
-    animation: marquee 30s linear infinite;
-    width: max-content;
-  }
-  .tech-tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    white-space: nowrap;
-    padding: 0.6rem 1.2rem;
-    border: 1px solid var(--border);
-    border-radius: 2px;
+  .team-detail a {
+    color: var(--accent-gold);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--accent-gold-dim);
     transition: all 0.3s;
   }
-  .tech-tag:hover { border-color: var(--accent-gold-dim); color: var(--accent-gold); }
-
-  /* ========== ROADMAP ========== */
-  .roadmap-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.5rem;
-    margin-top: 3rem;
-  }
-  .roadmap-phase {
-    padding: 2rem;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    position: relative;
-    transition: all 0.4s;
-  }
-  .roadmap-phase:hover {
-    border-color: rgba(201,168,76,0.2);
-  }
-  .roadmap-phase.active { border-color: var(--accent-gold-dim); }
-  .roadmap-phase.active::before {
-    content: 'CURRENT';
-    position: absolute; top: -0.6rem; right: 1rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.55rem;
-    letter-spacing: 2px;
-    color: var(--accent-gold);
-    background: var(--bg-primary);
-    padding: 0 0.5rem;
-  }
-  .phase-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 3px;
-    color: var(--accent-gold-dim);
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
-  .roadmap-phase h3 {
-    font-size: 1.05rem;
-    font-weight: 500;
-    margin-bottom: 0.6rem;
-  }
-  .roadmap-phase p {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    line-height: 1.7;
-    font-weight: 300;
-  }
-  .kill-criterion {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px dashed var(--border);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-    line-height: 1.5;
-  }
-  .kill-criterion::before {
-    content: 'KILL ▸ ';
-    color: #c9534c;
+  .team-detail a:hover { border-bottom-style: solid; }
+  @media (max-width: 600px) {
+    .team-row { grid-template-columns: 1fr; gap: 0.6rem; }
   }
 
-  /* ========== CTA ========== */
+  /* ========== ALGERNON QUOTE / CTA ========== */
   #cta {
     text-align: center;
     padding: 10rem 3rem;
@@ -540,9 +501,9 @@
     0%, 100% { opacity: 0.3; transform: scaleY(1); }
     50% { opacity: 1; transform: scaleY(1.2); }
   }
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
   }
 
   /* ========== MOUSE GLOW ========== */
@@ -561,10 +522,8 @@
     nav { padding: 1rem 1.5rem; }
     .nav-links { display: none; }
     .section { padding: 5rem 1.5rem; }
-    .field-report { padding: 2rem; }
-    .signal-journey::before { left: 16px; }
-    .signal-node { width: 33px; min-width: 33px; height: 33px; font-size: 0.6rem; }
-    .signal-step { gap: 1.5rem; }
+    .progress-report { padding: 2rem; }
+    .product-card { padding: 2rem; }
     footer { flex-direction: column; gap: 1.5rem; text-align: center; }
     #cta { padding: 6rem 1.5rem; }
   }
@@ -576,28 +535,28 @@
 
 <!-- NAV -->
 <nav id="navbar">
-  <div class="nav-logo">Vouched Signals</div>
+  <div class="nav-logo">Algernon Laboratories</div>
   <ul class="nav-links">
-    <li><a href="#thesis">Thesis</a></li>
-    <li><a href="#surfaces">Product</a></li>
-    <li><a href="#calibration">Calibration</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#products">What We Build</a></li>
+    <li><a href="#how">How We Work</a></li>
+    <li><a href="#team">Team</a></li>
     <li><a href="#cta">Contact</a></li>
   </ul>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <canvas id="signal-canvas"></canvas>
+  <canvas id="maze-canvas"></canvas>
   <div class="hero-content">
-    <p class="hero-epigraph">"All models are wrong, but some are useful." — George Box</p>
+    <p class="hero-epigraph">"I want to be smart… I want to know things." — Charlie Gordon</p>
     <h1 class="hero-logo-text">
-      <span class="gold">Vouched</span><br>
-      <span class="white">Signals</span>
+      <span class="gold">Algernon</span><br>
+      <span class="white">Laboratories</span>
     </h1>
-    <p class="hero-subtitle">Behavioral Intelligence · Stablecoin Compliance</p>
-    <p class="hero-tagline">Should I trust this wallet? Answered with reasons attached.</p>
-    <a href="#thesis" class="hero-cta">Read the Thesis</a>
+    <p class="hero-subtitle">A Lab · Bootstrapped · AI-Leveraged</p>
+    <p class="hero-tagline">Building behavioral intelligence for the markets the world overlooks.</p>
+    <a href="#about" class="hero-cta">Enter the Lab</a>
   </div>
   <div class="scroll-indicator">
     <span>Scroll</span>
@@ -605,178 +564,134 @@
   </div>
 </section>
 
-<!-- THESIS -->
-<section id="thesis" class="section">
-  <div class="section-label">Field Report No. 1 — Thesis</div>
-  <h2 class="section-title">Wrong calibration is worse than no signal.</h2>
+<!-- ABOUT -->
+<section id="about" class="section">
+  <div class="section-label">Progress Report No. 1 — The Lab</div>
+  <h2 class="section-title">A small lab, run like a lab.</h2>
   <p class="section-body">
-    Chainalysis, TRM, and Elliptic built their models on Western exchange data. That ground truth is wrong
-    for this market. A Lagos P2P off-ramp looks like laundering. A Nairobi savings circle looks like a
-    Sybil ring. Legitimate flows get flagged, real fraud slips through, and your compliance team burns
-    hours on false positives.
+    Algernon Laboratories is a three-person company building behavioral intelligence systems for markets
+    that incumbent compliance and credit infrastructure cannot profitably serve. We are bootstrapped,
+    AI-leveraged, and deliberately small — by design, not by circumstance.
   </p>
-
-  <div class="miscalibration">
-    <div class="mis-card wrong">
-      <div class="label">Generic Model Reads</div>
-      <p class="pattern">Identical amounts, fixed schedule, ten wallets in rotation.</p>
-      <p class="reading">→ Layering. Flag for review.</p>
-    </div>
-    <div class="mis-card">
-      <div class="label">Calibrated Reads</div>
-      <p class="pattern">Identical amounts, fixed schedule, ten wallets in rotation.</p>
-      <p class="reading">→ Chama. The oldest savings instrument on the continent.</p>
-    </div>
-  </div>
-
-  <div class="field-report">
-    <div class="report-header">field report — algernon labs, 2026</div>
+  <div class="progress-report">
+    <div class="report-header">progris riport — algernon labs, 2026</div>
     <p class="report-text">
-      Vouched Signals is <em>behavioral intelligence calibrated for emerging market stablecoin flows.</em>
-      We score wallets, detect Sybil clusters, and surface risk signals that reflect how stablecoins
-      actually move in Kenya, Nigeria, and Ghana — not how they move on Coinbase. The API answers one
-      question for every wallet your business touches: <em>should I trust this?</em>
-      With reasons attached, so your compliance team can defend the decision.
+      The name is a deliberate borrow from Daniel Keyes. <em>Algernon</em> is the lab mouse who runs the
+      maze first — who learns the path so the next runner can follow. That posture is the company's
+      operating thesis: <em>run the experiment, publish the result, let the next person move faster.</em>
+    </p>
+    <p class="report-text">
+      We treat every product as a falsifiable hypothesis with an explicit kill criterion. We ship
+      narrow surfaces that work, instead of broad surfaces that almost work. We use AI as engineering
+      leverage — not as marketing — and we measure ourselves against revenue, not against the
+      thickness of our roadmap.
     </p>
   </div>
 </section>
 
-<!-- SURFACES -->
-<section id="surfaces" class="section">
-  <div class="section-label">Field Report No. 2 — Surfaces</div>
-  <h2 class="section-title">What we ship</h2>
+<!-- WHAT WE BUILD -->
+<section id="products" class="section">
+  <div class="section-label">Progress Report No. 2 — Active Work</div>
+  <h2 class="section-title">What we're building</h2>
   <p class="section-body">
-    One indexed graph. Multiple products. Each surface answers a question your compliance team is already
-    asking — without forcing them to learn a new vocabulary or a new dashboard.
+    One active product. One deferred thesis kept alive as low-budget exploration. We don't ship a
+    portfolio for show — every line on this page is something we work on.
   </p>
-  <div class="features-grid">
-    <div class="feature-card">
-      <span class="feature-icon">🛡️</span>
-      <h3>Shield API</h3>
-      <p>One call returns a wallet risk score, behavioral flags, and an explanation. No SDK. No dashboard to learn. Just an answer your compliance team can defend in a regulator review.</p>
+  <div class="products-grid">
+
+    <div class="product-card">
+      <div>
+        <div class="product-status">Active · Phase 0</div>
+        <h3>Vouched Signals</h3>
+        <div class="product-tag">Behavioral Intelligence · Stablecoin Compliance</div>
+        <p>
+          Wallet risk screening, Sybil cluster detection, and behavioral fingerprinting calibrated for
+          emerging market stablecoin flows. Built for compliance teams at on-ramps, fintechs, and VASPs
+          that the enterprise vendors cannot profitably serve. Beachhead market: Celo / MiniPay,
+          Kenya / Nigeria / Ghana.
+        </p>
+      </div>
+      <a href="https://vouchedsignals.com" class="product-cta">vouchedsignals.com →</a>
     </div>
-    <div class="feature-card">
-      <span class="feature-icon">🕸️</span>
-      <h3>Sybil Cluster Detection</h3>
-      <p>Coordinated wallet networks, surfaced. Chama rotations distinguished from layering. Agent settlement clusters distinguished from smurfing. Calibrated for the patterns that matter here.</p>
+
+    <div class="product-card exploration">
+      <div>
+        <div class="product-status">Exploration · Deferred</div>
+        <h3>Behavioral Credit Scoring</h3>
+        <div class="product-tag">Long-Horizon R&amp;D</div>
+        <p>
+          On-chain behavioral credit scoring for emerging market borrowers. Deferred until
+          we have outcome data — labeled defaults from compliance customers, or indexed
+          on-chain lending protocols. Lives as low-budget research; revisited when the data exists.
+          Honest framing: a thesis, not a product.
+        </p>
+      </div>
+      <a href="#cta" class="product-cta">Talk to us →</a>
     </div>
-    <div class="feature-card">
-      <span class="feature-icon">🧬</span>
-      <h3>Behavioral Fingerprinting</h3>
-      <p>Counterparty graphs, timing distributions, value patterns. Features built from how stablecoins actually move — P2P off-ramps, airtime triangles, mobile-money bridges, agent topology.</p>
+
+  </div>
+</section>
+
+<!-- HOW WE WORK -->
+<section id="how" class="section">
+  <div class="section-label">Progress Report No. 3 — Operating Model</div>
+  <h2 class="section-title">How a three-person lab compresses a ten-person roadmap</h2>
+  <p class="section-body">
+    Four constraints we design around. Together they explain why we ship the things we ship and refuse
+    the things we refuse.
+  </p>
+  <div class="principles-grid">
+    <div class="principle-card">
+      <div class="principle-number">/ 01</div>
+      <h3>Bootstrap-first</h3>
+      <p>No VC. No runway pressure to spend. A profitable small business is the goal — outside capital is an option we evaluate from a position of strength, not a milestone we chase.</p>
     </div>
-    <div class="feature-card">
-      <span class="feature-icon">📋</span>
-      <h3>Compliance Dashboard</h3>
-      <p>Case management, evidence trails, regulator-ready reports. Priced for the tier Chainalysis and TRM cannot profitably serve — sub-$2K/month, focused, sufficient.</p>
+    <div class="principle-card">
+      <div class="principle-number">/ 02</div>
+      <h3>AI as leverage</h3>
+      <p>We use AI aggressively to compress engineering, research, and documentation. We do not confuse "AI builds it faster" with "AI builds the business faster." Customer conversations still take calendar time.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-number">/ 03</div>
+      <h3>Profitable before scale</h3>
+      <p>We build to be profitable at small scale first. Growth comes from proven economics, not from raised capital. The maze gets walked before it gets paved.</p>
+    </div>
+    <div class="principle-card">
+      <div class="principle-number">/ 04</div>
+      <h3>Falsifiability over conviction</h3>
+      <p>Every phase has a kill criterion. Thesis falsified → we pivot or shut down the phase. The point is to learn fast, not to be right. We publish the results either way.</p>
     </div>
   </div>
 </section>
 
-<!-- CALIBRATION / APPROACH -->
-<section id="calibration" class="section">
-  <div class="section-label">Field Report No. 3 — Calibration</div>
-  <h2 class="section-title">How signals are built</h2>
+<!-- TEAM -->
+<section id="team" class="section">
+  <div class="section-label">Progress Report No. 4 — Team</div>
+  <h2 class="section-title">Who builds this</h2>
   <p class="section-body">
-    Every score reflects a sequence of decisions about what counts as normal. We make those decisions
-    visible — and we calibrate them to local context, not to imported defaults.
+    A three-person team. Small by design.
   </p>
-  <div class="signal-journey">
-    <div class="signal-step">
-      <div class="signal-node">I</div>
-      <div class="signal-step-content">
-        <h3>Index the Chain</h3>
-        <p>Celo first. Full transaction graph indexed into Apache AGE. BSC and Tron follow customer demand, not speculation. The indexer is a cost center to customers and a strategic asset to us — both true.</p>
+  <div class="team-block">
+    <div class="team-row">
+      <div class="team-role">Founder</div>
+      <div class="team-detail">
+        <h3>Jared</h3>
+        <p>
+          Software engineer and architect. Rust, distributed systems, formal methods. Technical lead and
+          product direction across the company. Reachable at <a href="mailto:jared@algernonlab.dev">jared@algernonlab.dev</a>
+          or on <a href="https://github.com/goingtravelin">GitHub</a>.
+        </p>
       </div>
     </div>
-    <div class="signal-step">
-      <div class="signal-node">II</div>
-      <div class="signal-step-content">
-        <h3>Build the Behavioral Graph</h3>
-        <p>Counterparties, timing distributions, amount clustering, agent topology. Raw on-chain motion becomes structured behavioral patterns that a model can reason about.</p>
+    <div class="team-row">
+      <div class="team-role">Co-Founders</div>
+      <div class="team-detail">
+        <h3>Two brothers</h3>
+        <p>
+          Joining as co-founders. Names withheld here pending a moment of their choosing —
+          they'll introduce themselves when they're ready.
+        </p>
       </div>
-    </div>
-    <div class="signal-step">
-      <div class="signal-node">III</div>
-      <div class="signal-step-content">
-        <h3>Detect Local Patterns</h3>
-        <p>Chama rotations. P2P off-ramp clusters around agent networks. MiniPay phone-number families. Airtime → stablecoin → cash triangles. Patterns that look anomalous to generic models — and aren't.</p>
-      </div>
-    </div>
-    <div class="signal-step">
-      <div class="signal-node">IV</div>
-      <div class="signal-step-content">
-        <h3>Score With Explanations</h3>
-        <p>Every flag carries its reasoning. Compliance teams need to defend their decisions to regulators, partners, and their own users. Black-box scores don't survive that conversation.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TECH STACK -->
-<section id="tech" class="section">
-  <div class="section-label">Field Report No. 4 — Infrastructure</div>
-  <h2 class="section-title">Built on verified foundations</h2>
-  <p class="section-body">
-    Rust where correctness matters. TLA+ specs for the load-bearing invariants. Apache AGE for the
-    behavioral graph. Postgres for the boring parts. AI-leveraged engineering compresses the rest.
-  </p>
-  <div class="tech-marquee">
-    <div class="tech-marquee-inner">
-      <span class="tech-tag">Celo Mainnet</span>
-      <span class="tech-tag">Rust / Axum</span>
-      <span class="tech-tag">Apache AGE</span>
-      <span class="tech-tag">sqlx / Postgres</span>
-      <span class="tech-tag">TLA+ Verified</span>
-      <span class="tech-tag">Behavioral Graphs</span>
-      <span class="tech-tag">Sybil Detection</span>
-      <span class="tech-tag">Domain Calibration</span>
-      <span class="tech-tag">MiniPay Ecosystem</span>
-      <span class="tech-tag">Celo Mainnet</span>
-      <span class="tech-tag">Rust / Axum</span>
-      <span class="tech-tag">Apache AGE</span>
-      <span class="tech-tag">sqlx / Postgres</span>
-      <span class="tech-tag">TLA+ Verified</span>
-      <span class="tech-tag">Behavioral Graphs</span>
-      <span class="tech-tag">Sybil Detection</span>
-      <span class="tech-tag">Domain Calibration</span>
-      <span class="tech-tag">MiniPay Ecosystem</span>
-    </div>
-  </div>
-</section>
-
-<!-- ROADMAP -->
-<section id="roadmap" class="section">
-  <div class="section-label">Field Report No. 5 — Timeline</div>
-  <h2 class="section-title">The phases</h2>
-  <p class="section-body">
-    Every phase has a decision gate. If the gate fails, we pivot or shut down — we don't slow-play.
-    Falsifiability over conviction.
-  </p>
-  <div class="roadmap-grid">
-    <div class="roadmap-phase active">
-      <div class="phase-label">Phase 0 — Foundation</div>
-      <h3>Demoable API</h3>
-      <p>Indexer running on Celo mainnet. Trust scoring layer built. 14-day demoable sprint to first externally-callable Shield endpoint.</p>
-      <div class="kill-criterion">No demoable API by end of Q2 → re-scope.</div>
-    </div>
-    <div class="roadmap-phase">
-      <div class="phase-label">Phase 1 — Beachhead</div>
-      <h3>First Paying Customers</h3>
-      <p>Shield API live. Three to five design partners (Cashramp-class operators in Kenya, Nigeria, Ghana). Pricing validated against the sub-$2K/month tier.</p>
-      <div class="kill-criterion">Fewer than 3 paying customers in 6 months → buyer doesn't exist at stated urgency.</div>
-    </div>
-    <div class="roadmap-phase">
-      <div class="phase-label">Phase 2 — Validation</div>
-      <h3>Calibration Benchmark</h3>
-      <p>Published precision/recall against generic models on labeled African flow data. The calibration thesis becomes evidence — or it dies here, honestly.</p>
-      <div class="kill-criterion">No measurable lift over generic models → reposition on price + scope alone.</div>
-    </div>
-    <div class="roadmap-phase">
-      <div class="phase-label">Phase 3 — Scale</div>
-      <h3>Network Compounds</h3>
-      <p>Multi-chain coverage where customers need it. Compliance Dashboard ships. Regulator-track features (informal OTC broker detection) open the second buyer conversation.</p>
-      <div class="kill-criterion">Acquisition CAC stays high after 20 customers → niche may not generalize.</div>
     </div>
   </div>
 </section>
@@ -784,24 +699,25 @@
 <!-- CTA -->
 <section id="cta" class="section">
   <p class="cta-quote">
-    "Until the lion learns how to write, every story will glorify the hunter."
+    "We must cultivate our own garden."
   </p>
-  <p class="cta-attribution">— African proverb, attributed by Chinua Achebe</p>
+  <p class="cta-attribution">— Voltaire, Candide (1759)</p>
   <a href="mailto:jared@algernonlab.dev" class="cta-email">jared@algernonlab.dev</a>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-brand">© 2026 Algernon Labs LLC — A product of Algernon Laboratories</div>
+  <div class="footer-brand">© 2026 Algernon Laboratories LLC — Wyoming</div>
   <div class="footer-links">
+    <a href="https://vouchedsignals.com">Vouched Signals ↗</a>
+    <a href="https://github.com/goingtravelin">GitHub ↗</a>
     <a href="mailto:jared@algernonlab.dev">Contact</a>
-    <a href="https://algernonlab.dev">Algernon Labs</a>
   </div>
 </footer>
 
 <script>
-// ========== SIGNAL CANVAS (Animated Trust Graph) ==========
-const canvas = document.getElementById('signal-canvas');
+// ========== MAZE CANVAS (Animated Network) ==========
+const canvas = document.getElementById('maze-canvas');
 const ctx = canvas.getContext('2d');
 let nodes = [];
 let mouse = { x: -1000, y: -1000 };
@@ -822,14 +738,12 @@ function initNodes() {
       vx: (Math.random() - 0.5) * 0.3,
       vy: (Math.random() - 0.5) * 0.3,
       r: Math.random() * 2 + 1,
-      pulse: Math.random() * Math.PI * 2,
-      // Some nodes are "trusted" (gold), some are "unscored" (dim)
-      trust: Math.random()
+      pulse: Math.random() * Math.PI * 2
     });
   }
 }
 
-function drawSignals() {
+function drawMaze() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const gold = [201, 168, 76];
 
@@ -842,7 +756,7 @@ function drawSignals() {
     if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
     if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
 
-    // Mouse attract: signals reach toward the cursor (calibration)
+    // Mouse repel — the maze re-shapes around your gaze
     const dx = n.x - mouse.x;
     const dy = n.y - mouse.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
@@ -851,13 +765,12 @@ function drawSignals() {
       n.vy += dy * 0.0003;
     }
 
-    const pAlpha = (0.25 + Math.sin(n.pulse) * 0.15) * (0.4 + n.trust * 0.6);
+    const pAlpha = 0.3 + Math.sin(n.pulse) * 0.15;
     ctx.beginPath();
     ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
     ctx.fillStyle = `rgba(${gold[0]},${gold[1]},${gold[2]},${pAlpha})`;
     ctx.fill();
 
-    // Connect nearby nodes — trust edges
     for (let j = i + 1; j < nodes.length; j++) {
       const m = nodes[j];
       const d = Math.sqrt((n.x - m.x) ** 2 + (n.y - m.y) ** 2);
@@ -871,11 +784,11 @@ function drawSignals() {
       }
     }
   }
-  requestAnimationFrame(drawSignals);
+  requestAnimationFrame(drawMaze);
 }
 
 resizeCanvas();
-drawSignals();
+drawMaze();
 window.addEventListener('resize', resizeCanvas);
 
 // ========== MOUSE GLOW ==========
